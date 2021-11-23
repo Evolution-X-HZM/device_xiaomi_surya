@@ -117,6 +117,11 @@ PRODUCT_PACKAGES += \
 # Camera
 $(call inherit-product-if-exists, device/xiaomi/surya-miuicamera/config.mk)
 
+# Dex/ART optimization
+PRODUCT_ART_TARGET_INCLUDE_DEBUG_BUILD := false
+PRODUCT_DEX_PREOPT_DEFAULT_COMPILER_FILTER := everything
+USE_DEX2OAT_DEBUG := false
+
 # Display
 PRODUCT_PACKAGES += \
     android.hardware.graphics.composer@2.4-service \
