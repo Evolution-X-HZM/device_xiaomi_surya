@@ -90,6 +90,9 @@ system_ext/framework/audiosphere.jar
 -vendor/lib/soundfx/libasphere.so
 -vendor/lib/soundfx/libshoebox.so
 
+# Audio FX modules - from cheetah-user 13 TQ2A.230405.003.E1 9802792 release-keys
+-vendor/lib/soundfx/libspatialaudio.so|379b98b020729d05cad4e84202f42335b96bb755
+
 # Audio HAL
 -vendor/lib/hw/audio.primary.sm6150.so
 -vendor/lib/libadm.so
