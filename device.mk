@@ -30,6 +30,9 @@ $(call inherit-product, $(SRC_TARGET_DIR)/product/updatable_apex.mk)
 PRODUCT_COPY_FILES += \
     $(LOCAL_PATH)/configs/public.libraries.txt:$(TARGET_COPY_OUT_VENDOR)/etc/public.libraries.txt
 
+# Inherit surya firmware images
+$(call inherit-product, firmware/xiaomi/surya/Android.mk)
+
 # ANT+
 PRODUCT_PACKAGES += \
     AntHalService-Soong \
@@ -401,6 +404,7 @@ PRODUCT_COPY_FILES += \
 # Soong namespaces
 PRODUCT_SOONG_NAMESPACES += \
     $(LOCAL_PATH) \
+    firmware/xiaomi/surya \
     hardware/google/interfaces \
     hardware/google/pixel \
     hardware/xiaomi
