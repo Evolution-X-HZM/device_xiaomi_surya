@@ -10,6 +10,9 @@ dalvik.vm.dex2oat64.enabled=true
 # FUSE
 persist.sys.fuse.passthrough.enable=true
 
+# Display
+ro.sf.use_latest_hwc_vsync_period=0
+
 # Media
 media.aac_51_output_enabled=true
 media.stagefright.enable-aac=true
