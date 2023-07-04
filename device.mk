@@ -114,6 +114,9 @@ PRODUCT_COPY_FILES += \
 PRODUCT_PACKAGES += \
     libpiex_shim
 
+# Camera
+$(call inherit-product-if-exists, device/xiaomi/surya-miuicamera/config.mk)
+
 # Device-specific settings
 PRODUCT_PACKAGES += \
     XiaomiParts
