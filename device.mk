@@ -117,10 +117,6 @@ PRODUCT_PACKAGES += \
 # Camera
 $(call inherit-product-if-exists, device/xiaomi/surya-miuicamera/config.mk)
 
-# Device-specific settings
-PRODUCT_PACKAGES += \
-    XiaomiParts
-
 # Display
 PRODUCT_PACKAGES += \
     android.hardware.graphics.composer@2.4-service \
