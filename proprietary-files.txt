@@ -89,6 +89,8 @@ system_ext/etc/permissions/audiosphere.xml
 system_ext/framework/audiosphere.jar
 -vendor/lib/soundfx/libasphere.so
 -vendor/lib/soundfx/libshoebox.so
+vendor/lib/soundfx/libmisoundfx.so
+vendor/lib64/soundfx/libmisoundfx.so
 
 # Audio FX modules - from cheetah-user 13 TQ2A.230405.003.E1 9802792 release-keys
 -vendor/lib/soundfx/libspatialaudio.so|379b98b020729d05cad4e84202f42335b96bb755
@@ -99,6 +101,11 @@ system_ext/framework/audiosphere.jar
 -vendor/lib/libaudio_log_utils.so
 -vendor/lib/libaudioparsers.so
 -vendor/lib/libqtigef.so
+
+# Audio Dirac
+lib/libDiracAPI_SHARED.so:vendor/lib/libDiracAPI_SHARED.so
+lib/soundfx/libdirac.so:vendor/lib/soundfx/libdirac.so
+vendor/etc/diracmobile.config
 
 # Batterysecret
 -vendor/bin/batterysecret
