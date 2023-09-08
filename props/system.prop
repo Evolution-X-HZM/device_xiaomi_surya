@@ -16,6 +16,8 @@ persist.sys.fuse.passthrough.enable=true
 
 # Display
 ro.sf.use_latest_hwc_vsync_period=0
+ro.sf.force_handle_idle_timeout=1
+ro.sf.defer_refresh_rate_when_off=1
 
 # IMS
 persist.vendor.qti.telephony.vt_cam_interface=2
