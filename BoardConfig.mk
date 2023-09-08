@@ -1,76 +1,127 @@
-# config.mk
 #
-# Product-specific compile-time definitions.
+# Copyright (C) 2020 The LineageOS Project
+#
+# Licensed under the Apache License, Version 2.0 (the "License");
+# you may not use this file except in compliance with the License.
+# You may obtain a copy of the License at
+#
+#      http://www.apache.org/licenses/LICENSE-2.0
+#
+# Unless required by applicable law or agreed to in writing, software
+# distributed under the License is distributed on an "AS IS" BASIS,
+# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+# See the License for the specific language governing permissions and
+# limitations under the License.
 #
 
-#Generate DTBO image
-BOARD_KERNEL_SEPARATED_DTBO := true
+BOARD_VENDOR := xiaomi
 
-### Dynamic partition Handling
-ifneq ($(strip $(BOARD_DYNAMIC_PARTITION_ENABLE)),true)
-BOARD_VENDORIMAGE_PARTITION_SIZE := 1887436800
-BOARD_SYSTEMIMAGE_PARTITION_SIZE := 3221225472
-BOARD_ODMIMAGE_PARTITION_SIZE := 67108864
-BOARD_BUILD_SYSTEM_ROOT_IMAGE := true
-TARGET_NO_RECOVERY := true
-BOARD_USES_RECOVERY_AS_BOOT := true
-else
-# Define the Dynamic Partition sizes and groups.
-ifeq ($(ENABLE_VIRTUAL_AB), true)
-     BOARD_SUPER_PARTITION_SIZE := 6442450944
-else
-     BOARD_SUPER_PARTITION_SIZE := 12884901888
-endif
+DEVICE_PATH := device/xiaomi/surya
 
-BOARD_SUPER_PARTITION_GROUPS := qti_dynamic_partitions
-BOARD_QTI_DYNAMIC_PARTITIONS_SIZE := 6438256640
-BOARD_QTI_DYNAMIC_PARTITIONS_PARTITION_LIST := vendor odm
-BOARD_RECOVERYIMAGE_PARTITION_SIZE := 0x06000000
-BOARD_EXT4_SHARE_DUP_BLOCKS := true
-    ifeq ($(BOARD_KERNEL_SEPARATED_DTBO),true)
-        # Enable DTBO for recovery image
-        BOARD_INCLUDE_RECOVERY_DTBO := true
-    endif
-endif
-### Dynamic partition Handling
+# Inherit from proprietary files
+include vendor/xiaomi/surya/BoardConfigVendor.mk
 
-BOARD_SYSTEMSDK_VERSIONS:=$(SHIPPING_API_LEVEL)
-
-TARGET_BOARD_PLATFORM := msmnile
-TARGET_BOOTLOADER_BOARD_NAME := msmnile
-
+# Architecture
 TARGET_ARCH := arm64
 TARGET_ARCH_VARIANT := armv8-a
 TARGET_CPU_ABI := arm64-v8a
 TARGET_CPU_ABI2 :=
 TARGET_CPU_VARIANT := generic
+TARGET_CPU_VARIANT_RUNTIME := cortex-a76
 
 TARGET_2ND_ARCH := arm
-TARGET_2ND_ARCH_VARIANT := armv7-a-neon
+TARGET_2ND_ARCH_VARIANT := armv8-a
 TARGET_2ND_CPU_ABI := armeabi-v7a
 TARGET_2ND_CPU_ABI2 := armeabi
-TARGET_2ND_CPU_VARIANT := cortex-a9
+TARGET_2ND_CPU_VARIANT := generic
+TARGET_2ND_CPU_VARIANT_RUNTIME := cortex-a76
 
-TARGET_HW_DISK_ENCRYPTION := true
-TARGET_HW_DISK_ENCRYPTION_PERF := true
+# ANT+
+BOARD_ANT_WIRELESS_DEVICE := "qualcomm-hidl"
 
-BOARD_SECCOMP_POLICY := device/qcom/$(TARGET_BOARD_PLATFORM)/seccomp
+# Assert
+TARGET_OTA_ASSERT_DEVICE := surya,karna
 
-TARGET_NO_BOOTLOADER := false
-TARGET_USES_UEFI := true
-TARGET_NO_KERNEL := false
--include vendor/qcom/prebuilt/msmnile/BoardConfigVendor.mk
--include $(QCPATH)/common/msmnile/BoardConfigVendor.mk
+# Audio
+AUDIO_FEATURE_ENABLED_EXTENDED_COMPRESS_FORMAT := true
+AUDIO_FEATURE_ENABLED_EXTN_FORMATS := true
+AUDIO_FEATURE_ENABLED_FM_POWER_OPT := true
+AUDIO_FEATURE_ENABLED_GEF_SUPPORT := true
+AUDIO_FEATURE_ENABLED_HDMI_SPK := true
+AUDIO_FEATURE_ENABLED_INSTANCE_ID := true
+AUDIO_FEATURE_ENABLED_PROXY_DEVICE := true
 
-USE_OPENGL_RENDERER := true
-BOARD_USE_LEGACY_UI := true
+BOARD_SUPPORTS_OPENSOURCE_STHAL := true
+BOARD_SUPPORTS_SOUND_TRIGGER := true
+BOARD_USES_ALSA_AUDIO := true
 
-#Disable appended dtb
+USE_CUSTOM_AUDIO_POLICY := 1
+USE_XML_AUDIO_POLICY_CONF := 1
+
+# Bluetooth
+BOARD_BLUETOOTH_BDROID_BUILDCFG_INCLUDE_DIR := $(DEVICE_PATH)/bluetooth/include
+
+# Bootloader
+TARGET_BOOTLOADER_BOARD_NAME := sm6150
+TARGET_NO_BOOTLOADER := true
+
+# Display
+TARGET_USES_COLOR_METADATA := true
+TARGET_USES_DISPLAY_RENDER_INTENTS := true
+TARGET_USES_DRM_PP := true
+TARGET_USES_HWC2 := true
+
+# Filesystem
+TARGET_FS_CONFIG_GEN := $(DEVICE_PATH)/configs/config.fs
+
+# FM
+BOARD_HAVE_QCOM_FM := true
+
+# GPS
+BOARD_VENDOR_QCOM_GPS_LOC_API_HARDWARE := default
+LOC_HIDL_VERSION := 4.0
+
+# HIDL
+DEVICE_MANIFEST_FILE := $(DEVICE_PATH)/configs/hidl/manifest.xml
+DEVICE_MANIFEST_FILE += hardware/qcom-caf/sm8150/media/conf_files/sm6150/c2_manifest.xml
+DEVICE_MATRIX_FILE := $(DEVICE_PATH)/configs/hidl/compatibility_matrix.xml
+ODM_MANIFEST_SKUS += surya
+ODM_MANIFEST_SURYA_FILES := $(DEVICE_PATH)/configs/hidl/manifest-nfc.xml
+
+# Init
+TARGET_INIT_VENDOR_LIB := //$(DEVICE_PATH):libinit_surya
+TARGET_RECOVERY_DEVICE_MODULES := libinit_surya
+
+# Kernel
+BOARD_KERNEL_BASE := 0x00000000
+BOARD_KERNEL_PAGESIZE := 4096
+BOARD_KERNEL_SEPARATED_DTBO := true
+
+TARGET_KERNEL_CONFIG := surya_defconfig
+TARGET_KERNEL_SOURCE := kernel/xiaomi/surya
+TARGET_KERNEL_ADDITIONAL_FLAGS := \
+    LLVM=1 \
+    LLVM_IAS=1
+
+BOARD_KERNEL_CMDLINE := console=ttyMSM0,115200n8 earlycon=msm_geni_serial,0x880000
+BOARD_KERNEL_CMDLINE += androidboot.hardware=qcom androidboot.console=ttyMSM0
+BOARD_KERNEL_CMDLINE += androidboot.usbcontroller=a600000.dwc3
+BOARD_KERNEL_CMDLINE += service_locator.enable=1
+BOARD_KERNEL_CMDLINE += lpm_levels.sleep_disabled=1
+BOARD_KERNEL_CMDLINE += loop.max_part=7
+
+# TARGET_KERNEL_APPEND_DTB handling
+ifeq ($(strip $(PRODUCT_USE_DYNAMIC_PARTITIONS)),true)
+BOARD_KERNEL_IMAGE_NAME := Image.gz
 TARGET_KERNEL_APPEND_DTB := false
+else
+BOARD_KERNEL_IMAGE_NAME := Image.gz-dtb
+TARGET_KERNEL_APPEND_DTB := true
+endif
 
-# Set Header version for bootimage
+# Set header version for bootimage
 ifneq ($(strip $(TARGET_KERNEL_APPEND_DTB)),true)
-#Enable dtb in boot image and Set Header version
+# Enable DTB in bootimage and set header version
 BOARD_INCLUDE_DTB_IN_BOOTIMG := true
 BOARD_BOOTIMG_HEADER_VERSION := 2
 else
@@ -78,203 +129,89 @@ BOARD_BOOTIMG_HEADER_VERSION := 1
 endif
 BOARD_MKBOOTIMG_ARGS := --header_version $(BOARD_BOOTIMG_HEADER_VERSION)
 
-# Defines for enabling A/B builds
-AB_OTA_UPDATER := true
-# Full A/B partition update set
-# AB_OTA_PARTITIONS := xbl rpm tz hyp pmic modem abl boot keymaster cmnlib cmnlib64 system bluetooth
+# Media
+TARGET_USES_ION := true
+TARGET_DISABLED_UBWC := true
 
-# Minimum partition set for automation to test recovery generation code
-# Packages generated by using just the below flag cannot be used for updating a device. You must pass
-# in the full set mentioned above as part of your make commandline
-AB_OTA_PARTITIONS ?= boot vendor odm
-
+# Partitions
+BOARD_BUILD_SYSTEM_ROOT_IMAGE := true
 BOARD_USES_METADATA_PARTITION := true
 
-#Enable compilation of oem-extensions to recovery
-#These need to be explicitly
-ifneq ($(AB_OTA_UPDATER),true)
-    TARGET_RECOVERY_UPDATER_LIBS += librecovery_updater_msm
-endif
+BOARD_FLASH_BLOCK_SIZE := 131072
+BOARD_BOOTIMAGE_PARTITION_SIZE := 134217728
+BOARD_CACHEIMAGE_PARTITION_SIZE := 268435456
+BOARD_DTBOIMG_PARTITION_SIZE := 33554432
+BOARD_RECOVERYIMAGE_PARTITION_SIZE := 67108864
+BOARD_SYSTEMIMAGE_PARTITION_SIZE := 3758096384
+BOARD_USERDATAIMAGE_PARTITION_SIZE := 55371083776
+BOARD_VENDORIMAGE_PARTITION_SIZE := 1610612736
 
-#Enable split vendor image
-ENABLE_VENDOR_IMAGE := true
-ifeq ($(ENABLE_VENDOR_IMAGE), true)
-ifneq ($(strip $(BOARD_DYNAMIC_PARTITION_ENABLE)),true)
-TARGET_RECOVERY_FSTAB := device/qcom/msmnile/recovery_vendor_variant.fstab
-else
-TARGET_RECOVERY_FSTAB := device/qcom/msmnile/recovery_dynamic_partition.fstab
-endif
+BOARD_CACHEIMAGE_FILE_SYSTEM_TYPE := ext4
 BOARD_VENDORIMAGE_FILE_SYSTEM_TYPE := ext4
+
+TARGET_USERIMAGES_USE_EXT4 := true
+TARGET_USERIMAGES_USE_F2FS := true
+
 TARGET_COPY_OUT_VENDOR := vendor
-BOARD_PROPERTY_OVERRIDES_SPLIT_ENABLED := true
-TARGET_USERIMAGES_USE_EXT4 := true
-else
-TARGET_RECOVERY_FSTAB := device/qcom/msmnile/recovery.fstab
-endif
-TARGET_USERIMAGES_USE_EXT4 := true
-BOARD_BOOTIMAGE_PARTITION_SIZE := 0x06000000
-BOARD_USERDATAIMAGE_PARTITION_SIZE := 48318382080
-BOARD_PERSISTIMAGE_PARTITION_SIZE := 33554432
-BOARD_METADATAIMAGE_PARTITION_SIZE := 16777216
-BOARD_PREBUILT_DTBOIMAGE := out/target/product/msmnile/prebuilt_dtbo.img
-BOARD_DTBOIMG_PARTITION_SIZE := 0x0800000
-BOARD_PERSISTIMAGE_FILE_SYSTEM_TYPE := ext4
-BOARD_FLASH_BLOCK_SIZE := 131072 # (BOARD_KERNEL_PAGESIZE * 64)
 
-#----------------------------------------------------------------------
-# Compile Linux Kernel
-#----------------------------------------------------------------------
-ifeq ($(TARGET_BUILD_VARIANT),user)
-     KERNEL_DEFCONFIG := $(shell ls ./kernel/msm-4.14/arch/arm64/configs/vendor/ | grep sm8...-perf_defconfig)
-endif
+# Platform
+TARGET_BOARD_PLATFORM := sm6150
 
-ifeq ($(KERNEL_DEFCONFIG),)
-     KERNEL_DEFCONFIG := $(shell ls ./kernel/msm-4.14/arch/arm64/configs/vendor/ | grep sm8..._defconfig)
-endif
+# Power
+TARGET_POWERHAL_MODE_EXT := $(DEVICE_PATH)/power/power-mode.cpp
 
-BOARD_VENDOR_KERNEL_MODULES := \
-    $(KERNEL_MODULES_OUT)/audio_apr.ko \
-    $(KERNEL_MODULES_OUT)/audio_wglink.ko \
-    $(KERNEL_MODULES_OUT)/audio_q6_pdr.ko \
-    $(KERNEL_MODULES_OUT)/audio_q6_notifier.ko \
-    $(KERNEL_MODULES_OUT)/audio_adsp_loader.ko \
-    $(KERNEL_MODULES_OUT)/audio_q6.ko \
-    $(KERNEL_MODULES_OUT)/audio_usf.ko \
-    $(KERNEL_MODULES_OUT)/audio_pinctrl_wcd.ko \
-    $(KERNEL_MODULES_OUT)/audio_swr.ko \
-    $(KERNEL_MODULES_OUT)/audio_wcd_core.ko \
-    $(KERNEL_MODULES_OUT)/audio_swr_ctrl.ko \
-    $(KERNEL_MODULES_OUT)/audio_wsa881x.ko \
-    $(KERNEL_MODULES_OUT)/audio_platform.ko \
-    $(KERNEL_MODULES_OUT)/audio_hdmi.ko \
-    $(KERNEL_MODULES_OUT)/audio_stub.ko \
-    $(KERNEL_MODULES_OUT)/audio_wcd9xxx.ko \
-    $(KERNEL_MODULES_OUT)/audio_mbhc.ko \
-    $(KERNEL_MODULES_OUT)/audio_wcd934x.ko \
-    $(KERNEL_MODULES_OUT)/audio_wcd9360.ko \
-    $(KERNEL_MODULES_OUT)/audio_wcd_spi.ko \
-    $(KERNEL_MODULES_OUT)/audio_native.ko \
-    $(KERNEL_MODULES_OUT)/audio_machine_msmnile.ko \
-    $(KERNEL_MODULES_OUT)/wil6210.ko \
-    $(KERNEL_MODULES_OUT)/msm_11ad_proxy.ko \
-    $(KERNEL_MODULES_OUT)/mpq-adapter.ko \
-    $(KERNEL_MODULES_OUT)/mpq-dmx-hw-plugin.ko \
-    $(KERNEL_MODULES_OUT)/tspp.ko \
+# Properties
+TARGET_ODM_PROP += $(DEVICE_PATH)/odm.prop
+TARGET_PRODUCT_PROP += $(DEVICE_PATH)/product.prop
+TARGET_SYSTEM_PROP += $(DEVICE_PATH)/system.prop
+TARGET_VENDOR_PROP += $(DEVICE_PATH)/vendor.prop
 
-# install lkdtm only for userdebug and eng build variants
-ifneq (,$(filter userdebug eng, $(TARGET_BUILD_VARIANT)))
-    ifeq (,$(findstring perf_defconfig, $(KERNEL_DEFCONFIG)))
-        BOARD_VENDOR_KERNEL_MODULES += $(KERNEL_MODULES_OUT)/lkdtm.ko
-    endif
-endif
+# QCOM
+BOARD_USES_QCOM_HARDWARE := true
 
-BOARD_DO_NOT_STRIP_VENDOR_MODULES := true
-TARGET_USES_ION := true
-TARGET_USES_NEW_ION_API :=true
-TARGET_USES_QCOM_BSP := false
-BOARD_KERNEL_CMDLINE := console=ttyMSM0,115200n8 earlycon=msm_geni_serial,0xa90000 androidboot.hardware=qcom androidboot.console=ttyMSM0 androidboot.memcg=1 lpm_levels.sleep_disabled=1 video=vfb:640x400,bpp=32,memsize=3072000 msm_rtb.filter=0x237 service_locator.enable=1 swiotlb=2048 loop.max_part=7 androidboot.usbcontroller=a600000.dwc3 kpti=off
+# Recovery
+BOARD_INCLUDE_RECOVERY_DTBO := true
+TARGET_RECOVERY_FSTAB := $(DEVICE_PATH)/rootdir/etc/fstab.qcom
+TARGET_RECOVERY_PIXEL_FORMAT := "RGBX_8888"
 
-BOARD_EGL_CFG := device/qcom/$(TARGET_BOARD_PLATFORM)/egl.cfg
+# RIL
+ENABLE_VENDOR_RIL_SERVICE := true
 
-BOARD_KERNEL_BASE        := 0x00000000
-BOARD_KERNEL_PAGESIZE    := 4096
-BOARD_KERNEL_TAGS_OFFSET := 0x01E00000
-BOARD_RAMDISK_OFFSET     := 0x02000000
+# Releasetools
+TARGET_RELEASETOOLS_EXTENSIONS := $(DEVICE_PATH)
 
-TARGET_KERNEL_ARCH := arm64
-TARGET_KERNEL_HEADER_ARCH := arm64
-TARGET_KERNEL_CROSS_COMPILE_PREFIX := $(shell pwd)/prebuilts/gcc/linux-x86/aarch64/aarch64-linux-android-4.9/bin/aarch64-linux-androidkernel-
+# Screen density
+TARGET_SCREEN_DENSITY := 440
 
-KERN_CONF_PATH := kernel/msm-4.14/arch/arm64/configs/vendor/
-KERN_CONF_FILE := $(shell ls $(KERN_CONF_PATH) | grep sm8..._defconfig)
-KERNEL_UNCOMPRESSED_DEFCONFIG := $(shell grep "CONFIG_BUILD_ARM64_UNCOMPRESSED_KERNEL=y" $(KERN_CONF_PATH)$(KERN_CONF_FILE))
-ifeq ($(KERNEL_UNCOMPRESSED_DEFCONFIG),)
-	TARGET_USES_UNCOMPRESSED_KERNEL := false
-else
-	TARGET_USES_UNCOMPRESSED_KERNEL := true
-endif
-
-MAX_EGL_CACHE_KEY_SIZE := 12*1024
-MAX_EGL_CACHE_SIZE := 2048*1024
-
-#File system for ODM
-TARGET_COPY_OUT_ODM := odm
-BOARD_ODMIMAGE_FILE_SYSTEM_TYPE := ext4
-
-BOARD_USES_GENERIC_AUDIO := true
-TARGET_NO_RPC := true
-
-TARGET_PLATFORM_DEVICE_BASE := /devices/soc.0/
-TARGET_INIT_VENDOR_LIB := libinit_msm
-
-TARGET_COMPILE_WITH_MSM_KERNEL := true
-
-#Enable PD locater/notifier
-TARGET_PD_SERVICE_ENABLED := true
-
-#Enable peripheral manager
-TARGET_PER_MGR_ENABLED := true
-
-# Enable dex pre-opt to speed up initial boot
-ifeq ($(HOST_OS),linux)
-    ifeq ($(WITH_DEXPREOPT),)
-      WITH_DEXPREOPT := true
-      WITH_DEXPREOPT_PIC := true
-      ifneq ($(TARGET_BUILD_VARIANT),user)
-        # Retain classes.dex in APK's for non-user builds
-        DEX_PREOPT_DEFAULT := nostripping
-      endif
-    endif
-endif
-
-TARGET_USES_GRALLOC1 := true
-
-# Enable sensor multi HAL
-USE_SENSOR_MULTI_HAL := true
-
-#Add non-hlos files to ota packages
-ADD_RADIO_FILES := true
-
-#Enable INTERACTION_BOOST
-TARGET_USES_INTERACTION_BOOST := true
-
-#Enable DRM plugins 64 bit compilation
-TARGET_ENABLE_MEDIADRM_64 := true
-
-#----------------------------------------------------------------------
-# wlan specific
-#----------------------------------------------------------------------
-ifeq ($(strip $(BOARD_HAS_QCOM_WLAN)),true)
-include device/qcom/wlan/msmnile/BoardConfigWlan.mk
-endif
-
-ifeq ($(ENABLE_VENDOR_IMAGE), false)
-  $(error "Vendor Image is mandatory !!")
-endif
-
-BUILD_BROKEN_DUP_RULES := true
-
-BUILD_BROKEN_NINJA_USES_ENV_VARS := SDCLANG_AE_CONFIG SDCLANG_CONFIG SDCLANG_SA_ENABLED SDCLANG_CONFIG_AOSP
-BUILD_BROKEN_NINJA_USES_ENV_VARS += TEMPORARY_DISABLE_PATH_RESTRICTIONS
-BUILD_BROKEN_NINJA_USES_ENV_VARS += RTIC_MPGEN
-BUILD_BROKEN_PREBUILT_ELF_FILES := true
-BUILD_BROKEN_USES_BUILD_HOST_SHARED_LIBRARY := true
-BUILD_BROKEN_USES_BUILD_HOST_STATIC_LIBRARY := true
-BUILD_BROKEN_USES_BUILD_HOST_EXECUTABLE := true
-BUILD_BROKEN_USES_BUILD_COPY_HEADERS := true
-
-#Enable VNDK Compliance
-BOARD_VNDK_VERSION:=current
-Q_BU_DISABLE_MODULE := true
-
-
-#################################################################################
-# This is the End of BoardConfig.mk file.
-# Now, Pickup other split Board.mk files:
-#################################################################################
-# TODO: Relocate the system Board.mk files pickup into qssi lunch, once it is up.
--include vendor/qcom/defs/board-defs/system/*.mk
--include vendor/qcom/defs/board-defs/vendor/*.mk
-#################################################################################
-
+# Sepolicy
+TARGET_SEPOLICY_DIR := msmsteppe
 include device/qcom/sepolicy_vndr/SEPolicy.mk
+
+BOARD_VENDOR_SEPOLICY_DIRS += $(DEVICE_PATH)/sepolicy/vendor
+
+# Vendor security patch level
+VENDOR_SECURITY_PATCH := 2022-06-05
+
+# Verified Boot
+BOARD_AVB_ENABLE := true
+BOARD_AVB_MAKE_VBMETA_IMAGE_ARGS += --flags 3
+BOARD_AVB_RECOVERY_ALGORITHM := SHA256_RSA4096
+BOARD_AVB_RECOVERY_KEY_PATH := external/avb/test/data/testkey_rsa4096.pem
+BOARD_AVB_RECOVERY_ROLLBACK_INDEX := 1
+BOARD_AVB_RECOVERY_ROLLBACK_INDEX_LOCATION := 1
+
+# WiFi
+BOARD_WLAN_DEVICE := qcwcn
+BOARD_HOSTAPD_DRIVER := NL80211
+BOARD_HOSTAPD_PRIVATE_LIB := lib_driver_cmd_$(BOARD_WLAN_DEVICE)
+BOARD_WPA_SUPPLICANT_DRIVER := NL80211
+BOARD_WPA_SUPPLICANT_PRIVATE_LIB := lib_driver_cmd_$(BOARD_WLAN_DEVICE)
+QC_WIFI_HIDL_FEATURE_DUAL_AP := true
+WIFI_DRIVER_DEFAULT := qca_cld3
+WIFI_DRIVER_STATE_CTRL_PARAM := "/dev/wlan"
+WIFI_DRIVER_STATE_OFF := "OFF"
+WIFI_DRIVER_STATE_ON := "ON"
+WIFI_HIDL_FEATURE_AWARE := true
+WIFI_HIDL_FEATURE_DUAL_INTERFACE := true
+WIFI_HIDL_UNIFIED_SUPPLICANT_SERVICE_RC_ENTRY := true
+WPA_SUPPLICANT_VERSION := VER_0_8_X

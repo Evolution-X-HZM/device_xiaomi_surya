@@ -1,2 +1,0 @@
-libnpu.so
-libhta_hexagon_runtime.so
